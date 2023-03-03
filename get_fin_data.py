@@ -1,3 +1,7 @@
+### Module to import and manipulate stock prices
+### Author: Joao Ramos Jungblut and Matheus Breitenbach
+### Last update: 2023-03-02
+
 import yfinance as yf
 import pandas as pd
 import datetime
@@ -6,7 +10,8 @@ import numpy as np
 
 
 default_end_date = str(datetime.date.today())
-def get_close_price(ticker: str, start_date: str, end_date: str = default_end_date) -> pd.core.frame.DataFrame:
+
+def get_close_price(ticker: str, start_date: str, end_date: str = default_end_date) -> pd.core.series.Series:
     """
     function to get the adjusted close price from yfinance package.
     
@@ -16,45 +21,74 @@ def get_close_price(ticker: str, start_date: str, end_date: str = default_end_da
         end_date: a string with the last date of the period; default option actual day.
     """
 
-    df = yf.download(ticker, start=start_date, end=end_date)
-    df = df.loc[:,"Adj Close"].to_frame()
-    df.rename(columns={"Adj Close": "adj_close"}, inplace=True)
+    try:
+        x = yf.download(ticker, start=start_date, end=end_date)
+        x = x.loc[:,"Adj Close"]
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("For brazilian stocks you should put '.SA' after ticker name. Example, 'PETR4' should be 'PETR4.SA' ")
+        return -1
+
+    return x
 
 
-    return df
+
+def get_intraday_price():
+    pass
+
+def export_data():
+    pass
+
+def import_data():
+    pass
 
 
-def normalize_price(stock: pd.core.frame.DataFrame, pct: float) -> pd.core.frame.DataFrame:
+
+def normalize_serie(x: pd.core.series.Series, pct: float = 0.7) -> pd.core.series.Series:
     """
     function to normalize the prices of stocks.
     
     parameters:
-        stock: a dataframe with the price of the stock.
-        pct: a float that specifies the size (percentage) of the in-sample.
+        x: a pandas Series with the price of the stock.
+        pct: a float that specifies the size (percentage) of the in-sample. Default value is equal to 70%. 
     """
 
-    n = round(len(stock)*pct)
-    stock_insample = stock.iloc[:n,:]
-    stock_outsample = stock.iloc[n:,:]
+    try:
+        n = round(len(x)*pct)
+        in_sample = x.iloc[:n]
+        out_sample = x.iloc[n:]
 
-    price_max = np.max(stock_insample)
-    price_min = np.min(stock_insample)
-    price_range = price_max - price_min
+        max_value = np.max(in_sample)
+        min_value = np.min(in_sample)
+        range_value = max_value - min_value
 
-    norm_price_insample = stock_insample.sub(price_min).div(price_range)
-    norm_price_insample.rename(columns={"adj_close": "adj_close_in"}, inplace=True)
-
-    norm_price_outsample = stock_outsample.sub(price_min).div(price_range)
-    norm_price_insample.rename(columns={"adj_close": "adj_close_out"}, inplace=True)
-    
-    norm_price = pd.concat([norm_price_outsample, norm_price_insample], axis=1)
-
-    return norm_price
-
-
-
-'''
-    if len(stock_one) != len(stock_two):
-        warnings.warn("Dataframes with different sizes")
+        normalized_in_sample = in_sample.sub(min_value).div(range_value)
+        normalized_out_sample = out_sample.sub(min_value).div(range_value)
+        normalized = pd.concat([normalized_in_sample, normalized_out_sample], axis=0)
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input must be a pandas.core.frame.DataFrame dtype float64.")
         return -1
-'''
+
+    return normalized
+
+
+
+def spread_serie(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.core.series.Series:
+    """
+    function to calculate the spread betwen two different series.
+
+    parameters:
+        x: a pandas Series with the normalized price of stock 1.
+        y: a pandas Series with the normalized price of stock 2.
+    """
+
+    try:
+        difference = x - y
+        diff_mean = np.mean(difference)
+        diff_std = np.std(difference)
+        spread = difference.sub(diff_mean).div(diff_std)
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input x and y must have the same size.")
+        warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
+        return -1
+    
+    return spread
