@@ -35,15 +35,19 @@ def get_close_price(ticker: str, start_date: str, end_date: str = default_end_da
 def get_intraday_price():
     pass
 
+
+
 def export_data(data: pd.core.series, data_name: str) -> None:
     try:
         import_data
-data_name
+        data_name
     except:
-
         data.to_csv()
 
-def import_dadata(data_name: str: -> pd.DataFrame
+
+
+def import_data(data_name: str) -> pd.DataFrame:
     try:
-        data = pd.read_csv(f"./data/{data_name}.csv")    paexcept (): #file not found
+        data = pd.read_csv(f"./data/{data_name}.csv")    
+    except: #file not found
         warnings.warn("File not found")
