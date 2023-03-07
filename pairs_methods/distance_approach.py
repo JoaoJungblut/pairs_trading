@@ -1,9 +1,10 @@
 ### Distance approach module
 ### Author: Joao Ramos Jungblut and Matheus Breitenbach
-### Last update: 2023-03-03
+### Last update: 2023-03-07
 
 import numpy as np
 import pandas as pd
+import warnings
 
 def normalize_serie(x: pd.core.series.Series, pct: float = 0.7) -> pd.core.series.Series:
     """
@@ -44,7 +45,7 @@ def distance_spread(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.co
     """
 
     try:
-        difference = x - y
+        difference = np.subtract(x, y)
         diff_mean = np.mean(difference)
         diff_std = np.std(difference)
         spread = difference.sub(diff_mean).div(diff_std)
@@ -54,3 +55,43 @@ def distance_spread(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.co
         return -1
     
     return spread
+
+
+
+def calculate_euclidean_distance(x: pd.core.series.Series, y: pd.core.series.Series) -> float: 
+    """
+    function to calculate the euclidean distance between two pandas Series.
+
+    parameters:
+        x: a pandas Series with the normalized price of stock 1.
+        y: a pandas Series with the normalized price of stock 2.
+    """
+
+    try:
+        euclidean_distance = np.sqrt(np.sum(np.square(np.subtract(x, y))))
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input x and y must have the same size.")
+        warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
+        return -1
+
+    return euclidean_distance
+
+
+
+def calculate_correlation(x: pd.core.series.Series, y: pd.core.series.Series) -> float:
+    """
+    function to calculate the correlation between two pandas Series.
+
+    parameters:
+        x: a pandas Series with the normalized price of stock 1.
+        y: a pandas Series with the normalized price of stock 2.
+    """
+
+    try:
+        correlation = np.corrcoef(x, y)
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input x and y must have the same size.")
+        warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
+        return -1
+
+    return correlation[1, 0]
