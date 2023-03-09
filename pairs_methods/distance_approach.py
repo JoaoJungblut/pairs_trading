@@ -7,30 +7,10 @@ import pandas as pd
 import warnings
 
 
-def normalize_train(x_train: pd.core.series.Series) -> pd.core.series.Series:
+def normalize_series(x_train: pd.core.series.Series, x_test: pd.core.series.Series = None) -> pd.core.series.Series:
     """
-    function to normalize the prices of stocks at in_sample data.
-    
-    parameters:
-        x_train: a pandas Series with the price of the stock.
-    """
+    function to normalize the prices of stocks.
 
-    try:
-        max_train = np.max(x_train)
-        min_train = np.min(x_train)
-
-        normalized = x_train.sub(min_train).div(max_train-min_train)
-    except (TypeError, AttributeError, ValueError):
-        warnings.warn("Input must be a pandas.core.frame.DataFrame dtype float64.")
-        return -1
-
-    return normalized
-
-
-def normalize_test(x_train: pd.core.series.Series, x_test: pd.core.series.Series) -> pd.core.series.Series:
-    """
-    function to normalize the prices of stocks at out_of_sample data.
-    
     parameters:
         x_train: a pandas Series with the price of the stock.
         x_test: a pandas Series with the price of the stock.
@@ -40,12 +20,18 @@ def normalize_test(x_train: pd.core.series.Series, x_test: pd.core.series.Series
         max_train = np.max(x_train)
         min_train = np.min(x_train)
 
-        normalized = x_test.sub(min_train).div(max_train-min_train)
+        normalized_train = x_train.sub(min_train).div(max_train - min_train)
+
+        if x_test is not None:
+            normalized_test = x_test.sub(min_train).div(max_train - min_train)
+            return normalized_train, normalized_test
+        else:
+            return normalized_train
+
     except (TypeError, AttributeError, ValueError):
         warnings.warn("Input must be a pandas.core.frame.DataFrame dtype float64.")
         return -1
 
-    return normalized
 
 
 def spread_distance(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.core.series.Series:
@@ -67,9 +53,31 @@ def spread_distance(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.co
     return spread
 
 
-def z_score():
-    pass
 
+def z_score(spread_train: pd.core.series.Series, spread_test: pd.core.series.Series) -> pd.core.series.Series:
+    """
+    function to get the Z-score of the spread.
+
+    parameters:
+        x_train: a pandas Series with the price of the stock.
+        x_test: a pandas Series with the price of the stock.
+    """
+
+    try:
+        mean_train = np.mean(spread_train)
+        std_train = np.std(spread_test)
+
+        z_score_train = spread_train.sub(mean_train).div(std_train)
+
+        if spread_test is not None:
+            z_score_test = spread_test.sub(mean_train).div(std_train)
+            return (z_score_train, z_score_test)
+        else:
+            return z_score_train
+
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input must be a pandas.core.frame.DataFrame dtype float64.")
+        return -1
 
 
 
