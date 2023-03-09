@@ -1,4 +1,4 @@
-from dash import Dash, dcc, html, Input, Output
+from dash import dash, dcc, html, Input, Output
 import matplotlib.pyplot as plt
 import pandas as pd
 import get_fin_data as gfd
@@ -38,34 +38,51 @@ ax.axhline(-2, color="green", linestyle="dashed")
 ax.axvline(len(z_score_train), color="yellow", linestyle="dotted")
 
 
-
-app = Dash(__name__)
-
-app.layout = html.Div([
-    dcc.Dropdown(options=[{'label': "PETR4.SA", 'value': "PETR4.SA"},
-                           {'label': "ITSA4.SA", 'value': "ITSA4.SA"},
-                           {'label': "ITUB4.SA", 'value': "ITUB4.SA"},
-                           {'label': "VALE3.SA", 'value': "VALE3.SA"},
-                           {'label': "ABEV3.SA", 'value': "ABEV3.SA"},
-                           {'label': "BBDC4", 'value': "BBDC4"}], 
-                 value='BBDC4', 
-                 id='dropdown'),
-    html.Div(id='dd-output-container'),
-    dcc.Graph(
-        id='example-graph',
-        figure=fig
-    )
-])
-
+# creating dash
+app = dash.Dash(__name__)
 
 @app.callback(
     Output('dd-output-container', 'children'),
-    Input('dropdown', 'value')
+    Input('dropdown-1', 'value')
 )
 def update_output(value):
     return f'You have selected {value}'
 
 
+app.layout = html.Div([
+    dcc.Dropdown(
+        id='dropdown-1',
+        options=[{'label': "Petrobras", 'value': "PETR4.SA"},
+                 {'label': "Itausa", 'value': "ITSA4.SA"},
+                 {'label': "Itau", 'value': "ITUB4.SA"},
+                 {'label': "Vale", 'value': "VALE3.SA"},
+                 {'label': "Ambev", 'value': "ABEV3.SA"},
+                 {'label': "Bradesco", 'value': "BBDC4.SA"}],
+        multi=True,
+        placeholder="Select ticker one"
+    ),
+
+    dcc.Dropdown(
+        id='dropdown-2',
+        options=[{'label': "Petrobras", 'value': "PETR4.SA"},
+                 {'label': "Itausa", 'value': "ITSA4.SA"},
+                 {'label': "Itau", 'value': "ITUB4.SA"},
+                 {'label': "Vale", 'value': "VALE3.SA"},
+                 {'label': "Ambev", 'value': "ABEV3.SA"},
+                 {'label': "Bradesco", 'value': "BBDC4.SA"}],
+        multi=True,
+        placeholder="Select ticker two"
+    ),
+
+    html.Div(id='dd-output-container-1'),
+    dcc.Graph(id='example-graph',
+              figure=fig)
+]) 
+
+
+
 app.run_server(debug=True)
+
+
 
 
