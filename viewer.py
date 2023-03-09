@@ -33,61 +33,6 @@ z_score_train_test = z_score_train_test.rename(columns={"Adj Close": "Spread"})
 # creating graphic
 fig = px.line(data_frame=z_score_train_test, x="Date", y= "Spread", title="Z-score of the spread")
 
-"""
-fig, ax = plt.subplots()
-ax.plot(z_score_train_test, color="black")
-ax.axhline(0, color="red", linestyle="dashed")
-ax.axhline(2, color="green", linestyle="dashed")
-ax.axhline(-2, color="green", linestyle="dashed")
-ax.axvline(len(z_score_train), color="yellow", linestyle="dotted")
-
-
-# creating dash
-app = dash.Dash(__name__)
-
-@app.callback(
-    Output('dd-output-container', 'children'),
-    Input('dropdown-1', 'value')
-)
-def update_output(value):
-    return f'You have selected {value}'
-
-
-app.layout = html.Div([
-    dcc.Dropdown(
-        id='dropdown-1',
-        options=[{'label': "Petrobras", 'value': "PETR4.SA"},
-                 {'label': "Itausa", 'value': "ITSA4.SA"},
-                 {'label': "Itau", 'value': "ITUB4.SA"},
-                 {'label': "Vale", 'value': "VALE3.SA"},
-                 {'label': "Ambev", 'value': "ABEV3.SA"},
-                 {'label': "Bradesco", 'value': "BBDC4.SA"}],
-        multi=True,
-        placeholder="Select ticker one"
-    ),
-
-    dcc.Dropdown(
-        id='dropdown-2',
-        options=[{'label': "Petrobras", 'value': "PETR4.SA"},
-                 {'label': "Itausa", 'value': "ITSA4.SA"},
-                 {'label': "Itau", 'value': "ITUB4.SA"},
-                 {'label': "Vale", 'value': "VALE3.SA"},
-                 {'label': "Ambev", 'value': "ABEV3.SA"},
-                 {'label': "Bradesco", 'value': "BBDC4.SA"}],
-        multi=True,
-        placeholder="Select ticker two"
-    ),
-
-    html.Div(id='dd-output-container-1'),
-    dcc.Graph(id='example-graph',
-              figure=fig)
-]) 
-
-
-
-app.run_server(debug=True)
-
-"""
 
 app = dash.Dash(__name__)
 
