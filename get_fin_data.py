@@ -1,6 +1,6 @@
 ### Module to import, manipulate and export finance data
 ### Author: Joao Ramos Jungblut and Matheus Breitenbach
-### Last update: 2023-03-02
+### Last update: 2023-03-08
 
 import yfinance as yf
 import pandas as pd
@@ -36,18 +36,3 @@ def get_intraday_price():
     pass
 
 
-
-def export_data(data: pd.core.series, data_name: str) -> None:
-    try:
-        import_data
-        data_name
-    except:
-        data.to_csv()
-
-
-
-def import_data(data_name: str) -> pd.DataFrame:
-    try:
-        data = pd.read_csv(f"./data/{data_name}.csv")    
-    except: #file not found
-        warnings.warn("File not found")

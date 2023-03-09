@@ -1,33 +1,25 @@
 ### Distance approach module
 ### Author: Joao Ramos Jungblut and Matheus Breitenbach
-### Last update: 2023-03-07
+### Last update: 2023-03-08
 
 import numpy as np
 import pandas as pd
 import warnings
 
-# corrigir função
-def normalize_serie(x: pd.core.series.Series, pct: float = 0.7) -> pd.core.series.Series:
+
+def normalize_train(x_train: pd.core.series.Series) -> pd.core.series.Series:
     """
-    function to normalize the prices of stocks.
+    function to normalize the prices of stocks at in_sample data.
     
     parameters:
-        x: a pandas Series with the price of the stock.
-        pct: a float that specifies the size (percentage) of the in-sample. Default value is equal to 70%. 
+        x_train: a pandas Series with the price of the stock.
     """
 
     try:
-        n = round(len(x)*pct)
-        in_sample = x.iloc[:n]
-        out_sample = x.iloc[n:]
+        max_train = np.max(x_train)
+        min_train = np.min(x_train)
 
-        max_value = np.max(in_sample)
-        min_value = np.min(in_sample)
-        range_value = max_value - min_value
-
-        normalized_in_sample = in_sample.sub(min_value).div(range_value)
-        normalized_out_sample = out_sample.sub(min_value).div(range_value)
-        normalized = pd.concat([normalized_in_sample, normalized_out_sample], axis=0)
+        normalized = x_train.sub(min_train).div(max_train-min_train)
     except (TypeError, AttributeError, ValueError):
         warnings.warn("Input must be a pandas.core.frame.DataFrame dtype float64.")
         return -1
@@ -35,8 +27,28 @@ def normalize_serie(x: pd.core.series.Series, pct: float = 0.7) -> pd.core.serie
     return normalized
 
 
-# corrigir função
-def distance_spread(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.core.series.Series:
+def normalize_test(x_train: pd.core.series.Series, x_test: pd.core.series.Series) -> pd.core.series.Series:
+    """
+    function to normalize the prices of stocks at out_of_sample data.
+    
+    parameters:
+        x_train: a pandas Series with the price of the stock.
+        x_test: a pandas Series with the price of the stock.
+    """
+
+    try:
+        max_train = np.max(x_train)
+        min_train = np.min(x_train)
+
+        normalized = x_test.sub(min_train).div(max_train-min_train)
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input must be a pandas.core.frame.DataFrame dtype float64.")
+        return -1
+
+    return normalized
+
+
+def spread_distance(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.core.series.Series:
     """
     function to calculate the spread betwen two different series.
 
@@ -46,16 +58,18 @@ def distance_spread(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.co
     """
 
     try:
-        difference = np.subtract(x, y)
-        diff_mean = np.mean(difference)
-        diff_std = np.std(difference)
-        spread = difference.sub(diff_mean).div(diff_std)
+        spread = np.subtract(x, y)
     except (TypeError, AttributeError, ValueError):
         warnings.warn("Input x and y must have the same size.")
         warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
         return -1
     
     return spread
+
+
+def z_score():
+    pass
+
 
 
 
