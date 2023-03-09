@@ -6,6 +6,9 @@ import pandas as pd
 import warnings
 
 
+def split_base():
+    pass
+
 def position_signal(spread: pd.core.series.Series, open_point: float = 2, close_point: float = 0) -> pd.core.series.Series:
     """
     function to get the open and close signal of operations.
@@ -15,4 +18,8 @@ def position_signal(spread: pd.core.series.Series, open_point: float = 2, close_
         open_point: the local in spread where you wish to start operation.
         close_point: the local in spread where you wish to end operation.
     """
+    
+    
     pass
+
+

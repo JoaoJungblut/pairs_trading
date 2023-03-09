@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import warnings
 
+# corrigir função
 def normalize_serie(x: pd.core.series.Series, pct: float = 0.7) -> pd.core.series.Series:
     """
     function to normalize the prices of stocks.
@@ -34,7 +35,7 @@ def normalize_serie(x: pd.core.series.Series, pct: float = 0.7) -> pd.core.serie
     return normalized
 
 
-
+# corrigir função
 def distance_spread(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.core.series.Series:
     """
     function to calculate the spread betwen two different series.
@@ -95,3 +96,4 @@ def calculate_correlation(x: pd.core.series.Series, y: pd.core.series.Series) ->
         return -1
 
     return correlation[1, 0]
+
