@@ -27,7 +27,7 @@ def split_train_test(x: pd.core.series.Series, pct_insample: float = 0.7) -> pd.
 
 
 
-def position_signal(spread: pd.core.series.Series, open_point: float = 2, close_point: float = 0) -> pd.core.series.Series:
+def position_signal(spread: pd.core.series.Series, open_position: float = 2, close_position: float = 0) -> pd.core.series.Series:
     """
     function to get the open and close signal of operations.
 
