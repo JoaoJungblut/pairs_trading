@@ -54,7 +54,7 @@ def spread_distance(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.co
 
 
 
-def z_score(spread_train: pd.core.series.Series, spread_test: pd.core.series.Series) -> pd.core.series.Series:
+def Z_score(spread_train: pd.core.series.Series, spread_test: pd.core.series.Series) -> pd.core.series.Series:
     """
     function to get the Z-score of the spread.
 
