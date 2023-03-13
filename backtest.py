@@ -41,7 +41,6 @@ def generate_signal(Z_score: pd.core.series.Series, open_position: float = 2, cl
     try:
         signal = Z_score.copy()
         signal[:] = np.nan
-        signal[0] = 0
 
         # we are considering the same threshold for long and short position 
         open_position = np.abs(open_position)
@@ -79,4 +78,53 @@ def generate_signal(Z_score: pd.core.series.Series, open_position: float = 2, cl
         return -1
     
     return signal
+
+
+
+def calculate_stock_return(price_series: pd.core.series.Series) -> pd.core.series.Series:
+    """
+    This function calculate the return (percentage variation) of stock's price series.
+    
+    parameters:
+        price_series: a pandas Series dtype float64.
+    """
+    
+    try:
+        stock_return = np.log(price_series).diff().fillna(0)
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
+        return -1
+    
+    return stock_return
+
+
+
+def calculate_trade_return(signal: pd.core.series.Series, x: pd.core.series.Series, y: pd.core.series.Series) -> pd.core.series.Series:
+    """
+    This function calculate trade's return of the pair.
+    
+    parameters:
+        signal: a pandas Series dtype float64.
+        x: a pandas Series dtype float64 and x is the independent variable returns.
+        y: a pandas Series dtype float64 and y is the dependent variable returns.
+    """
+    
+    try:
+        trade_return = signal.copy()
+        trade_return[:] = np.nan
+        trade_return[0] = 0                       
+
+        for t in range(1, len(signal)):
+            # use t-1 to avoid look-ahead bias
+            if signal[t-1] == -1:
+                trade_return[t] = np.add(y[t], -x[t])
+            if signal[t-1] == 1:
+                trade_return[t] = np.add(-y[t], x[t])
+            if signal[t-1] == 0:
+                trade_return[t] = 0
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
+        return -1
+    
+    return trade_return
 
