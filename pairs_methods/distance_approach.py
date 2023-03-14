@@ -39,12 +39,12 @@ def spread_distance(x: pd.core.series.Series, y: pd.core.series.Series) -> pd.co
     function to calculate the spread betwen two different series.
 
     parameters:
-        x: a pandas Series with the normalized price of stock 1.
-        y: a pandas Series with the normalized price of stock 2.
+        x: a pandas Series with the normalized price of independent stock.
+        y: a pandas Series with the normalized price of dependent stock.
     """
 
     try:
-        spread = np.subtract(x, y)
+        spread = np.subtract(y, x)
     except (TypeError, AttributeError, ValueError):
         warnings.warn("Input x and y must have the same size.")
         warnings.warn("Input must be a pandas.core.series.Series dtype float64.")

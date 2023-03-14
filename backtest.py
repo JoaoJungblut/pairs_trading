@@ -117,9 +117,9 @@ def calculate_trade_return(signal: pd.core.series.Series, x: pd.core.series.Seri
         for t in range(1, len(signal)):
             # use t-1 to avoid look-ahead bias
             if signal[t-1] == -1:
-                trade_return[t] = np.add(y[t], -x[t])
-            if signal[t-1] == 1:
                 trade_return[t] = np.add(-y[t], x[t])
+            if signal[t-1] == 1:
+                trade_return[t] = np.add(y[t], -x[t])
             if signal[t-1] == 0:
                 trade_return[t] = 0
     except (TypeError, AttributeError, ValueError):
