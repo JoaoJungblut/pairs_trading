@@ -33,7 +33,7 @@ def generate_zscore_fig(ticker_name1, ticker_name2, start_date, end_date = str(d
     spread_test = dist.spread_distance(stock1_test_norm, stock2_test_norm)
 
     # calculating z-score 
-    z_score_train = dist.z_score(spread_train, spread_test)
+    z_score_train = dist.Z_score(spread_train, spread_test)
     #z_score_train_test = pd.concat([z_score_train, z_score_test], axis=0).to_frame().reset_index() 
     #z_score_train_test = z_score_train_test.rename(columns={"Adj Close": "Spread"})
 
