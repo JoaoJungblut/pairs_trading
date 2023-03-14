@@ -128,3 +128,19 @@ def calculate_trade_return(signal: pd.core.series.Series, x: pd.core.series.Seri
     
     return trade_return
 
+
+def calculate_compound_return(x: pd.core.series.Series) -> pd.core.series.Series:
+    """
+    This function calculate the compound return of a trade strategy.
+    
+    parameters:
+        x: a pandas Series dtype float64.
+    """
+    
+    try:
+        compound_return = np.exp(np.cumsum(x)) - 1
+    except (TypeError, AttributeError, ValueError):
+        warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
+        return -1
+    
+    return compound_return
