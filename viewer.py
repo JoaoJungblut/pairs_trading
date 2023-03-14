@@ -1,4 +1,4 @@
-from dash import dash, dcc, html, Input, Output
+from dash import dash, dcc, html, Input, Output, State
 import pandas as pd
 import plotly.express as px
 import get_fin_data as gfd
@@ -18,7 +18,7 @@ app.layout = html.Div([
         html.H1("Stocks"),
         html.Label("Select ticker one", className='dropdown-labels'),
         dcc.Dropdown(multi=False,
-                     id='dropdown-1',
+                     id='ticker-1',
                      options=[{'label': "Petrobras", 'value': "PETR4.SA"},
                               {'label': "Itausa", 'value': "ITSA4.SA"},
                               {'label': "Itau", 'value': "ITUB4.SA"},
@@ -28,7 +28,7 @@ app.layout = html.Div([
                               value='PETR4.SA'),
         html.Label("Select ticker two", className='dropdown-labels'), 
         dcc.Dropdown(multi=False,
-                     id='dropdown-2',
+                     id='ticker-2',
                      options=[{'label': "Petrobras", 'value': "PETR4.SA"},
                               {'label': "Itausa", 'value': "ITSA4.SA"},
                               {'label': "Itau", 'value': "ITUB4.SA"},
@@ -36,7 +36,7 @@ app.layout = html.Div([
                               {'label': "Ambev", 'value': "ABEV3.SA"},
                               {'label': "Bradesco", 'value': "BBDC4.SA"}],
                               value="ITSA4.SA"),
-        html.Button("Update"),
+        html.Button("Update", id="update_button"),
         ]),
     html.Div([
         html.Div([
@@ -48,11 +48,13 @@ app.layout = html.Div([
 # Connecting the Dropdown values to the graph
 @app.callback(
     Output(component_id='zscore_graph', component_property='figure'),
-    [Input(component_id='dropdown-2', component_property='value')],
+    [Input(component_id='update_button', component_property='n_clicks')],
+    [State(component_id='ticker-1',component_property='value'),
+     State(component_id='ticker-2',component_property='value')],
     prevent_initial_call=True
     )
-def generate_graph(stock2):
-    fig = controller.generate_zscore_fig("PETR4.SA", stock2, "2021-01-01")
+def generate_graph(n, stock1, stock2):
+    fig = controller.generate_zscore_fig(stock1, stock2, "2021-01-01")
     return fig
 
 
