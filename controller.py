@@ -10,19 +10,21 @@ def main_pipe(ticker_name, start_date, end_date):
     pass
 
 
-def generate_zscore_fig(ticker_name1, ticker_name2, start_date, end_date = str(datetime.date.today()), pct = 0.7):
+default_end_date = str(datetime.date.today())
+
+def generate_zscore_fig(ticker_name1: str, ticker_name2: str, start_date: str, end_date: str = default_end_date, pct_insample: float = 0.7):
 
     # importing stocks
-    stock1 = gfd.get_close_price(ticker_name1, start_date)
-    stock2 = gfd.get_close_price(ticker_name2, start_date)
+    stock1 = gfd.get_close_price(ticker_name1, start_date, end_date)
+    stock2 = gfd.get_close_price(ticker_name2, start_date, end_date)
 
     # spliting in-sample and ou-of-sample
-    if pct == None:
+    if pct_insample == None:
         stock1_train, stock1_test = backtest.split_train_test(stock1)
         stock2_train, stock2_test = backtest.split_train_test(stock2)
     else:
-        stock1_train, stock1_test = backtest.split_train_test(stock1, pct)
-        stock2_train, stock2_test = backtest.split_train_test(stock2, pct)
+        stock1_train, stock1_test = backtest.split_train_test(stock1, pct_insample)
+        stock2_train, stock2_test = backtest.split_train_test(stock2, pct_insample)
 
     # normalizing stocks
     stock1_train_norm, stock1_test_norm = dist.normalize_series(stock1_train, stock1_test)
@@ -33,11 +35,12 @@ def generate_zscore_fig(ticker_name1, ticker_name2, start_date, end_date = str(d
     spread_test = dist.spread_distance(stock1_test_norm, stock2_test_norm)
 
     # calculating z-score 
-    z_score_train = dist.Z_score(spread_train, spread_test)
-    #z_score_train_test = pd.concat([z_score_train, z_score_test], axis=0).to_frame().reset_index() 
-    #z_score_train_test = z_score_train_test.rename(columns={"Adj Close": "Spread"})
+    z_score_train, z_score_test = dist.Z_score(spread_train, spread_test)
+    z_score_train_test = pd.concat([z_score_train, z_score_test], axis=0)
+    z_score_train_test.rename("Spread", inplace=True)
+    z_score_train_test = z_score_train_test.to_frame().reset_index()
 
     # creating graphic
-    fig = px.line(data_frame=z_score_train, x="Date", y= "Spread", title="Z-score of the spread")
+    fig = px.line(data_frame=z_score_train_test, x="Date", y= "Spread", title="Z-score of the spread")
 
     return fig
