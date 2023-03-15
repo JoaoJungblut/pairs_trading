@@ -144,3 +144,7 @@ def calculate_compound_return(x: pd.core.series.Series) -> pd.core.series.Series
         return -1
     
     return compound_return
+
+
+def calculate_drawdown():
+    pass
