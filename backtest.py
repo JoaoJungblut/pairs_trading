@@ -146,5 +146,45 @@ def calculate_compound_return(x: pd.core.series.Series) -> pd.core.series.Series
     return compound_return
 
 
-def calculate_drawdown():
-    pass
+def calculate_drawdown(R, geometric=True, na_rm=True):
+    """
+    Calculates drawdown of input series based on the geometric or arithmetic method specified by the geometric flag.
+    
+    Parameters:
+    R (pandas DataFrame or array-like object): Input series.
+    geometric (bool): Flag to specify if geometric drawdown should be used. Default is True.
+    na_rm (bool): Flag to specify if missing values should be removed from the output. Default is True.
+    
+    Returns:
+    pandas DataFrame: The drawdowns of the input series.
+    """
+    if isinstance(R, pd.DataFrame):
+        x = R
+    else:
+        x = pd.DataFrame(R)
+        
+    columns = x.shape[1]
+    columnnames = x.columns
+    
+    def colDrawdown(x, geometric):
+        if geometric:
+            Return_cumulative = np.cumprod(1 + x)
+        else:
+            Return_cumulative = 1 + np.cumsum(x)
+        maxCumulativeReturn = np.maximum.accumulate(np.concatenate(([1], Return_cumulative)))[:-1]
+        column_drawdown = Return_cumulative/maxCumulativeReturn - 1
+        return column_drawdown
+    
+    for column in range(columns):
+        column_drawdown = x.iloc[:, column].dropna().apply(colDrawdown, geometric=geometric)
+        if column == 0:
+            drawdown = column_drawdown
+        else:
+            drawdown = pd.merge(drawdown, column_drawdown, left_index=True, right_index=True, how='outer')
+    
+    drawdown.columns = columnnames
+    
+    if na_rm:
+        drawdown = drawdown.dropna(how='all')
+        
+    return drawdown
