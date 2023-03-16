@@ -8,12 +8,13 @@ import controller
 
 
 
-fig = controller.generate_zscore_fig("PETR4.SA", "ITSA4.SA", "2021-01-01")
-
+zscore_fig = controller.generate_zscore_fig("PETR4.SA", "ITSA4.SA", "2021-01-01")
+ticker1_normalized_fig = controller.generate_normalized_fig("PETR4.SA", "2021-01-01")
+ticker2_normalized_fig = controller.generate_normalized_fig("ITSA4.SA", "2021-01-01")
 
 app = dash.Dash(__name__)
 
-app.layout = html.Div([
+app.layout = html.Div(children=[
     html.Div([
         html.H1("Stocks"),
         html.Label("Select ticker one", className='dropdown-labels'),
@@ -40,22 +41,38 @@ app.layout = html.Div([
         ]),
     html.Div([
         html.Div([
-            dcc.Graph(figure=fig, id='zscore_graph'),
+            dcc.Graph(figure=zscore_fig, id='zscore_graph'),
+        ])
+    ]),
+    html.Div([
+        html.Div([
+            dcc.Graph(figure=ticker1_normalized_fig, id='normalized_ticker1'),
+        ])
+    ]),
+    html.Div([
+        html.Div([
+            dcc.Graph(figure=ticker2_normalized_fig, id='normalized_ticker2'),
         ])
     ])
 ])
 
+
+
 # Connecting the Dropdown values to the graph
 @app.callback(
-    Output(component_id='zscore_graph', component_property='figure'),
+    [Output(component_id='zscore_graph', component_property='figure'), 
+     Output(component_id='normalized_ticker1', component_property='figure'), 
+     Output(component_id='normalized_ticker2', component_property='figure')],
     [Input(component_id='update_button', component_property='n_clicks')],
     [State(component_id='ticker-1',component_property='value'),
      State(component_id='ticker-2',component_property='value')],
     prevent_initial_call=True
     )
 def generate_graph(n, stock1, stock2):
-    fig = controller.generate_zscore_fig(stock1, stock2, "2021-01-01")
-    return fig
+    zscore_fig = controller.generate_zscore_fig(stock1, stock2, "2021-01-01")
+    ticker1_normalized_fig = controller.generate_normalized_fig(stock1, "2021-01-01")
+    ticker2_normalized_fig = controller.generate_normalized_fig(stock2, "2021-01-01")
+    return [zscore_fig, ticker1_normalized_fig, ticker2_normalized_fig]
 
 
 if __name__ == '__main__':
