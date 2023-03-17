@@ -38,7 +38,7 @@ def generate_zscore_fig(ticker_name1: str, ticker_name2: str, start_date: str, e
     z_score_train_test = z_score_train_test.to_frame().reset_index()
 
     # creating graphic
-    fig = px.line(data_frame=z_score_train_test, x="Date", y= "Spread", title="Z-score of the spread")
+    fig = px.line(data_frame=z_score_train_test, x="Date", y= "Spread", title=f"{ticker_name1} X {ticker_name2}: Spread")
 
     return fig
 
