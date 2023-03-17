@@ -9,8 +9,7 @@ import controller
 
 
 zscore_fig = controller.generate_zscore_fig("PETR4.SA", "ITSA4.SA", "2021-01-01")
-ticker1_normalized_fig = controller.generate_normalized_fig("PETR4.SA", "2021-01-01")
-ticker2_normalized_fig = controller.generate_normalized_fig("ITSA4.SA", "2021-01-01")
+normalized_price_fig = controller.generate_normalized_fig("PETR4.SA", "ITSA4.SA", "2021-01-01")
 
 app = dash.Dash(__name__)
 
@@ -46,14 +45,9 @@ app.layout = html.Div(children=[
     ]),
     html.Div([
         html.Div([
-            dcc.Graph(figure=ticker1_normalized_fig, id='normalized_ticker1'),
+            dcc.Graph(figure=normalized_price_fig, id='normalized_prices'),
         ])
     ]),
-    html.Div([
-        html.Div([
-            dcc.Graph(figure=ticker2_normalized_fig, id='normalized_ticker2'),
-        ])
-    ])
 ])
 
 
@@ -61,8 +55,7 @@ app.layout = html.Div(children=[
 # Connecting the Dropdown values to the graph
 @app.callback(
     [Output(component_id='zscore_graph', component_property='figure'), 
-     Output(component_id='normalized_ticker1', component_property='figure'), 
-     Output(component_id='normalized_ticker2', component_property='figure')],
+     Output(component_id='normalized_prices', component_property='figure')],
     [Input(component_id='update_button', component_property='n_clicks')],
     [State(component_id='ticker-1',component_property='value'),
      State(component_id='ticker-2',component_property='value')],
@@ -70,9 +63,8 @@ app.layout = html.Div(children=[
     )
 def generate_graph(n, stock1, stock2):
     zscore_fig = controller.generate_zscore_fig(stock1, stock2, "2021-01-01")
-    ticker1_normalized_fig = controller.generate_normalized_fig(stock1, "2021-01-01")
-    ticker2_normalized_fig = controller.generate_normalized_fig(stock2, "2021-01-01")
-    return [zscore_fig, ticker1_normalized_fig, ticker2_normalized_fig]
+    normalized_fig = controller.generate_normalized_fig(stock1, stock2, "2021-01-01")
+    return [zscore_fig, normalized_fig]
 
 
 if __name__ == '__main__':

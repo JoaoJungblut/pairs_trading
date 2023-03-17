@@ -44,14 +44,25 @@ def generate_zscore_fig(ticker_name1: str, ticker_name2: str, start_date: str, e
 
 
 
-def generate_normalized_fig(ticker_name: str, start_date: str, end_date: str = default_end_date, pct_insample: float = 0.7):
+def generate_normalized_fig(ticker_name1: str, ticker_name2: str,start_date: str, end_date: str = default_end_date, pct_insample: float = 0.7):
 
-    stock = gfd.get_close_price(ticker_name, "2021-01-01", "2023-01-01")
-    stock_train, stock_test = backtest.split_train_test(stock)
-    stock_train_norm, stock_test_norm = dist.normalize_series(stock_train, stock_test)
+    stock1 = gfd.get_close_price(ticker_name1, "2021-01-01", "2023-01-01")
+    stock_train1, stock_test1 = backtest.split_train_test(stock1)
+    stock_train_norm1, stock_test_norm1 = dist.normalize_series(stock_train1, stock_test1)
 
-    normalized  = pd.concat([stock_train_norm, stock_test_norm], axis=0)
-    normalized = normalized.to_frame().reset_index()
+    stock2 = gfd.get_close_price(ticker_name2, "2021-01-01", "2023-01-01")
+    stock_train2, stock_test2 = backtest.split_train_test(stock2)
+    stock_train_norm2, stock_test_norm2 = dist.normalize_series(stock_train2, stock_test2)
+    
+    normalized1  = pd.concat([stock_train_norm1, stock_test_norm1], axis=0)
+    normalized1 = normalized1.to_frame().reset_index()
+    normalized1 = normalized1.rename(columns={'Adj Close': f'{ticker_name1}'})
 
-    fig = px.line(data_frame=normalized, x="Date", y= "Adj Close", title=f"{ticker_name} Normalized price")
+    normalized2  = pd.concat([stock_train_norm2, stock_test_norm2], axis=0)
+    normalized2 = normalized2.to_frame().reset_index()
+    normalized2 = normalized2.rename(columns={'Adj Close': f'{ticker_name2}'})
+
+    normalized = pd.merge(normalized1, normalized2, how='left', on="Date")
+    normalized = normalized.set_index("Date")
+    fig = px.line(normalized, title=f"{ticker_name1} X {ticker_name2}: Normalized price")
     return fig
