@@ -6,6 +6,9 @@ import pandas as pd
 import plotly.express as px
 import datetime
 
+
+
+"""
 def main_pipe(ticker_name, start_date, end_date):
     pass
 
@@ -66,3 +69,5 @@ def generate_normalized_fig(ticker_name1: str, ticker_name2: str,start_date: str
     normalized = normalized.set_index("Date")
     fig = px.line(normalized, title=f"{ticker_name1} X {ticker_name2}: Normalized price")
     return fig
+""" 
+
