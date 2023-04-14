@@ -138,7 +138,7 @@ def calculate_compound_return(x: pd.core.series.Series) -> pd.core.series.Series
     """
     
     try:
-        compound_return = np.cumsum(x) - 1
+        compound_return = np.cumsum(x)
     except (TypeError, AttributeError, ValueError):
         warnings.warn("Input must be a pandas.core.series.Series dtype float64.")
         return -1
