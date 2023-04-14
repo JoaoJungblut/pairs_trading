@@ -33,7 +33,7 @@ def generate_normalized_fig(stock1_norm: pd.core.series.Series, stock2_norm: pd.
     stock1_norm = stock1_norm.rename(columns={'Adj Close': f'{ticker_name1}'})
 
     stock2_norm = stock2_norm.to_frame().reset_index()
-    stock2_norm = stock2_norm.rename(columns={'Adj Close': f'{ticker_name1}'})
+    stock2_norm = stock2_norm.rename(columns={'Adj Close': f'{ticker_name2}'})
 
     df_norm = pd.merge(stock1_norm, stock2_norm, how='left', on="Date")
     df_norm = df_norm.set_index("Date")
