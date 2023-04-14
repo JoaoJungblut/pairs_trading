@@ -1,3 +1,7 @@
+### Viewer module
+### Author: Joao Ramos Jungblut and Matheus Breitenbach
+### Last update: 2023-03-08
+
 import pandas as pd
 import plotly.express as px
 
@@ -39,8 +43,6 @@ def generate_normalized_fig(stock1_norm: pd.core.series.Series, stock2_norm: pd.
     return fig
 
 
-
-
 def generate_trade_returns_fig(cum_trade_return: pd.core.series.Series):
     """
     
@@ -53,5 +55,4 @@ def generate_trade_returns_fig(cum_trade_return: pd.core.series.Series):
     fig = px.line(cum_trade_return, title=f"Profit")
 
     return fig
-
 

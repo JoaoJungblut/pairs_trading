@@ -1,13 +1,16 @@
+### controller module, with the main pipe
+### Author: Joao Ramos Jungblut and Matheus Breitenbach
+### Last update: 2023-04-13
+
 from dash import dash, dcc, html, Input, Output, State
 import pandas as pd
 import plotly.express as px
-import datetime
 
 import get_fin_data as gfd
 from pairs_methods import distance_approach as dist
 import backtest
 import viewer
-
+import ticket_list
 
 
 def main_pipe(ticker_name1: str, ticker_name2: str, start_date: str):
@@ -56,37 +59,22 @@ def main_pipe(ticker_name1: str, ticker_name2: str, start_date: str):
     return zscore_fig, normalized_price_fig, trade_return_fig
 
 
-
-# creating first fig
 zscore_fig, normalized_price_fig, trade_return_fig = main_pipe("PETR4.SA", "ITSA4.SA", "2021-01-01")
 
 
-
-# creating app
 app = dash.Dash(__name__)
-
 app.layout = html.Div(children=[
     html.Div([
         html.H1("Stocks"),
         html.Label("Select ticker one", className='dropdown-labels'),
         dcc.Dropdown(multi=False,
                      id='ticker-1',
-                     options=[{'label': "Petrobras", 'value': "PETR4.SA"},
-                              {'label': "Itausa", 'value': "ITSA4.SA"},
-                              {'label': "Itau", 'value': "ITUB4.SA"},
-                              {'label': "Vale", 'value': "VALE3.SA"},
-                              {'label': "Ambev", 'value': "ABEV3.SA"},
-                              {'label': "Bradesco", 'value': "BBDC4.SA"}],
+                     options=ticket_list.TICKETS,
                               value='PETR4.SA'),
         html.Label("Select ticker two", className='dropdown-labels'), 
         dcc.Dropdown(multi=False,
                      id='ticker-2',
-                     options=[{'label': "Petrobras", 'value': "PETR4.SA"},
-                              {'label': "Itausa", 'value': "ITSA4.SA"},
-                              {'label': "Itau", 'value': "ITUB4.SA"},
-                              {'label': "Vale", 'value': "VALE3.SA"},
-                              {'label': "Ambev", 'value': "ABEV3.SA"},
-                              {'label': "Bradesco", 'value': "BBDC4.SA"}],
+                     options=ticket_list.TICKETS,
                               value="ITSA4.SA"),
         html.Button("Update", id="update_button"),
         ]),
@@ -97,22 +85,21 @@ app.layout = html.Div(children=[
     ]),
     html.Div([
         html.Div([
-            dcc.Graph(figure=normalized_price_fig, id='normalized_prices'),
+            dcc.Graph(figure=normalized_price_fig, id='normalized_prices_graph'),
         ])
     ]),
     html.Div([
         html.Div([
-            dcc.Graph(figure=trade_return_fig, id='zscore_graph'),
+            dcc.Graph(figure=trade_return_fig, id='return_graph'),
         ])
     ]),
 ])
 
 
-
-# Connecting the Dropdown values to the graph
 @app.callback(
     [Output(component_id='zscore_graph', component_property='figure'), 
-     Output(component_id='normalized_prices', component_property='figure')],
+     Output(component_id='normalized_prices_graph', component_property='figure'),
+     Output(component_id='return_graph', component_property='figure')],
     [Input(component_id='update_button', component_property='n_clicks')],
     [State(component_id='ticker-1',component_property='value'),
      State(component_id='ticker-2',component_property='value')],
@@ -121,7 +108,3 @@ app.layout = html.Div(children=[
 def generate_graph(n, stock1, stock2):
     zscore_fig, normalized_price_fig, trade_return_fig = main_pipe(stock1, stock2, "2021-01-01")
     return [zscore_fig, normalized_price_fig, trade_return_fig]
-
-
-if __name__ == '__main__':
-    app.run_server()#debug=True)
